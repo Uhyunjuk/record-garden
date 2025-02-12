@@ -33,7 +33,7 @@
                 </a>
             </div>
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="#" class="nav-link px-2 link-secondary">한줄일기</a></li>
+                <li><a href="/diaryList" class="nav-link px-2 link-secondary">One-line Diary</a></li>
                 <li><a href="#" class="nav-link px-2">Happy box</a></li>
             </ul>
             <div class="col-md-3 text-end">
@@ -45,8 +45,14 @@
 </div>
 <!--content-->
 <div class="container px-4 py-5" id="content">
-    <h4 class="pb-2">One-line Diary</h4>
-    <p>한줄일기</p>
+    <p class="pb-2">오늘 하루는 어땠나요?</p>
+    <div class="diaryForm">
+        <form action="/" method="post">
+            작성자 <input type="text" name="diaryWriter"><br>
+            내용 <input type="text" name="diaryContents"><br>
+            <input type="submit" value="작성">
+        </form>
+    </div>
 </div>
 <!--footer-->
 <div class="container">
