@@ -1,0 +1,25 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="header">
+    <div class="headerBox">
+        <div class="container">
+            <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+                <div class="col-md-3 mb-2 mb-md-0">
+                    <a href="#" class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto text-dark text-decoration-none">
+                        <img src="/images/leaf.png" alt="로고" width="27" height="30" class="me-2 logo">
+                        <span class="fs-4 mainName">기록정원</span>
+                    </a>
+                </div>
+                <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="/diaryList" class="nav-link px-2 link-secondary">One-line Diary</a></li>
+                    <li><a href="#" class="nav-link px-2">Happy box</a></li>
+                </ul>
+                <div class="col-md-3 text-end">
+                    <button type="button" class="btn btn-outline-success me-2">로그인</button>
+                    <button type="button" class="btn btn-success">회원가입</button>
+                </div>
+            </header>
+        </div>
+    </div>
+</div>
+</html>
