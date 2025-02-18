@@ -7,6 +7,7 @@ import myproject.record_garden.service.DiaryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -24,17 +25,17 @@ public class HomeController {
     }
 
     @PostMapping("/")
-    public String save(DiaryDTO diaryDTO) {
-        log.debug("DiaryDTO={}", diaryDTO);
+    public String save(@ModelAttribute DiaryDTO diaryDTO) {
+        log.debug("선택한 감정: {}", diaryDTO.getMoodToday());
         diaryService.save(diaryDTO);
-        return "home";
+        return "redirect:/";
     }
 
     @GetMapping("/list")
     public String findAll(Model model) {
-        List<DiaryDTO> diaryDTOList = diaryService.findAll();
-        model.addAttribute("diaryList", diaryDTOList);
-        log.debug("DiaryList={}", diaryDTOList);
-        return "list";
+        List<DiaryDTO> diaryList = diaryService.findAll();
+        model.addAttribute("diaryList", diaryList);
+        log.debug("DiaryList={}", diaryList);
+        return "diary/diaryList";
     }
 }

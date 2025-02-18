@@ -4,10 +4,12 @@
 
 <mapper namespace="Diary">
     <insert id="save" parameterType="diary">
-        insert into diary(diaryWriter, diaryContents) values(#{diaryWriter}, #{diaryContents})
+        insert into diary(diaryWriter, diaryContents, moodToday)
+        values(#{diaryWriter}, #{diaryContents}, #{moodToday})
     </insert>
 
     <select id="findAll" resultType="diary">
-        select * from diary order by id
+        select id, diaryWriter, diaryContents, moodToday, date_format(createdAt, "%Y-%m-%d") as createdAt, diaryHits
+        from diary order by id asc;
     </select>
 </mapper>

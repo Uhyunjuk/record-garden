@@ -2,8 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{/layouts/layout}">
-<head>
-    <title layout:title="기록정원">기록정원</title></head>
+
 <body>
 <main layout:fragment="content">
     <div class="container px-4 py-5" id="content">
@@ -12,6 +11,18 @@
             <form action="/" method="post">
                 작성자 <input type="text" name="diaryWriter"><br>
                 내용 <input type="text" name="diaryContents"><br>
+                오늘의 감정
+                <select name="moodToday" required>
+                    <option value="" disabled selected>선택하기</option>
+                    <option value="happy">😊 기쁨</option>
+                    <option value="sad">😢 슬픔</option>
+                    <option value="angry">😡 화남</option>
+                    <option value="excited">🤩 신남</option>
+                    <option value="tired">😴 피곤</option>
+                    <option value="calm">😌 차분</option>
+                    <option value="soso">🙂 그냥</option>
+                </select>
+                <br>
                 <input type="submit" value="작성">
             </form>
         </div>

@@ -11,6 +11,7 @@ public class DiaryDTO {
     private Long id;
     private String diaryWriter;
     private String diaryContents;
+    private String moodToday;
     private int diaryHits;
     private String createdAt;
 }
