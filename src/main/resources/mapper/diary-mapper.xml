@@ -10,6 +10,18 @@
 
     <select id="findAll" resultType="diary">
         select id, diaryWriter, diaryContents, moodToday, date_format(createdAt, "%Y-%m-%d") as createdAt, diaryHits
-        from diary order by id asc;
+        from diary
+        order by id asc;
     </select>
+
+    <update id="updateHits" parameterType="Long">
+        update diary set diaryHits=diaryHits+1
+        where id=#{id}
+    </update>
+    <select id="findById" parameterType="Long" resultType="diary">
+        select id, diaryWriter, diaryContents, diaryHits, date_format(createdAt, "%Y-%m-%d %H:%i:%s") as createdAt
+        from diary
+        where id=#{id}
+    </select>
+
 </mapper>

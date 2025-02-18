@@ -20,4 +20,13 @@ public class DiaryRepository {
     public List<DiaryDTO> findAll() {
         return sql.selectList("Diary.findAll");
     }
+
+    // 조회수
+    public void updateHits(Long id) {
+        sql.update("Diary.updateHits", id);
+    }
+
+    public DiaryDTO findById(Long id) {
+        return sql.selectOne("Diary.findById", id);
+    }
 }

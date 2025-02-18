@@ -20,4 +20,12 @@ public class DiaryService {
     public List<DiaryDTO> findAll() {
         return diaryRepository.findAll();
     }
+
+    public void updateHits(Long id) {
+        diaryRepository.updateHits(id);
+    }
+
+    public DiaryDTO findById(Long id) {
+        return diaryRepository.findById(id);
+    }
 }
