@@ -29,4 +29,8 @@ public class DiaryRepository {
     public DiaryDTO findById(Long id) {
         return sql.selectOne("Diary.findById", id);
     }
+
+    public DiaryDTO findTodayDiary() {
+        return sql.selectOne("Diary.findTodayDiary");
+    }
 }

@@ -24,4 +24,11 @@
         where id=#{id}
     </select>
 
+    <select id="findTodayDiary" resultType="diary">
+        select id, diaryWriter, diaryContents, moodToday, date_format(createdAt, "%Y-%m-%d") as createdAt
+        from diary
+        where date(createdAt) = curdate()
+        order by id desc
+        limit 1;
+    </select>
 </mapper>

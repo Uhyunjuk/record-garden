@@ -28,4 +28,8 @@ public class DiaryService {
     public DiaryDTO findById(Long id) {
         return diaryRepository.findById(id);
     }
+
+    public DiaryDTO findTodayDiary() {
+        return diaryRepository.findTodayDiary();
+    }
 }
