@@ -2,48 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{/layouts/layout}">
-<head>
-    <style>
-        .task-text {
-            transition: all 0.2s ease-in-out; 
-        }
-        input[type="checkbox"]:checked + label .task-text {
-            text-decoration: line-through;
-            color: gray;
-        }
-    </style>
-</head>
 <body>
 <main layout:fragment="content">
     <div class="container col-xl-10 col-xxl-8 px-1 py-5">
-        <div class="row align-items-center g-lg-5 py-5">
-            <!--오늘의할일-->
-            <div class="col-md-10 mx-auto col-lg-5">
-                <p class="col-lg-10 fs-4">오늘의 할 일</p>
-                <form id="taskForm" class="p-4 p-md-5 border rounded-3 bg-light">
-                    <small class="text-muted">할 일을 저장하고 성취감을 느껴보세요! 로그인하면 언제든 확인할 수 있어요. 😆✨</small>
-                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-3">
-                        <input type="text" id="taskInput" class="form-control" placeholder="할 일을 입력하세요">
-                        <button type="submit" class="btn btn-outline-secondary" style="white-space: nowrap;">등록</button>
-                    </div>
-                    <hr class="my-3">
-                    <div id="taskList"></div>
-                    <button id="deleteSelected" class="w-100 btn btn-primary mt-3" type="submit">선택삭제</button>
-                </form>
-            </div>
-
-            <!--한줄일기-->
+        <div class="row align-items-center g-lg-5">
+            <!-- 한줄일기 -->
             <div class="col-md-10 mx-auto col-lg-5">
                 <p class="col-lg-10 fs-4">오늘 하루는 어땠나요?</p>
-                <!--한줄일기 작성 폼-->
-                <form th:if="${todayDiary == null}" action="/diary/home-save" method="post" class="p-4 p-md-5 border rounded-3 bg-light">
+                
+                <!-- 비회원 작성 폼 -->
+                <form th:if="${loginUser == null}" id="diaryForm" class="p-4 p-md-5 border rounded-3 bg-light">
                     <div class="col-sm-12 mb-3">
                         <label for="diaryWriter" class="form-label">작성자</label>
-                        <input type="text" id="diaryWriter" name="diaryWriter" class="form-control" placeholder="이름을 입력하세요">
+                        <input type="text" id="diaryWriter" name="diaryWriter" class="form-control" placeholder="닉네임을 입력하세요" required>
                     </div>
                     <div class="col-sm-12 mb-3">
                         <label for="diaryContents" class="form-label">내용</label>
-                        <textarea id="diaryContents" name="diaryContents" class="form-control" placeholder="내용을 입력하세요" rows="2"></textarea>
+                        <textarea id="diaryContents" name="diaryContents" class="form-control" placeholder="내용을 입력하세요" rows="2" required></textarea>
                     </div>
                     <div class="col-sm-12 mb-4">
                         <label for="moodToday" class="form-label">오늘의 감정</label>
@@ -58,94 +33,65 @@
                             <option value="soso">🙂 그냥</option>
                         </select>
                     </div>
-                    <button class="w-100 btn btn-primary" type="submit">일기 등록</button>
+                    <button class="w-100 btn btn-primary" type="submit">일기 등록하기</button>
                     <hr class="my-3">
-                    <small class="text-muted">로그인해서 한 줄 일기를 매일 기록하고 나만의 기록정원을 가꿔보세요! 🌱</small>
+                    <small class="text-muted">로그인해서 한 줄 일기를 매일 기록하고 나만의 기록정원을 가꿔보세요 🌱</small>
                 </form>
 
-                <!--작성된 한 줄 일기 표시-->
+                <!-- 회원 작성 폼 -->
+                <form th:if="${loginUser != null and todayDiary == null}" action="/diary/write" method="post" class="p-4 p-md-5 border rounded-3 bg-light">
+                    <div class="d-flex align-items-center gap-1 mb-3">
+                        <label class="form-label fw-bold mb-0" style="min-width: 50px;">작성자</label>
+                        <input th:value="${loginUser != null ? loginUser.memberNickname : ''}" type="text" name="diaryWriter" class="form-control" readonly>
+                    </div>
+                    <div class="col-sm-12 mb-3">
+                        <label for="diaryContents" class="form-label">내용</label>
+                        <textarea name="diaryContents" class="form-control" placeholder="내용을 입력하세요" rows="2" required></textarea>
+                    </div>
+                    <div class="col-sm-12 mb-4">
+                        <label for="moodToday" class="form-label">오늘의 감정</label>
+                        <select name="moodToday" class="form-select" required>
+                            <option value="" disabled selected>선택하기</option>
+                            <option value="happy">😊 기쁨</option>
+                            <option value="sad">😢 슬픔</option>
+                            <option value="angry">😡 화남</option>
+                            <option value="excited">🤩 신남</option>
+                            <option value="tired">😴 피곤</option>
+                            <option value="calm">😌 차분</option>
+                            <option value="soso">🙂 그냥</option>
+                        </select>
+                    </div>
+                    <button class="w-100 btn btn-primary" type="submit">일기 등록하기</button>
+                </form>
+
+                <!-- 오늘 작성한 일기 보여주기 -->
                 <div th:if="${todayDiary != null}" class="p-4 p-md-5 border rounded-3 mt-4 bg-light">
                     <div class="d-flex align-items-center gap-1 mb-3">
                         <label class="form-label fw-bold mb-0" style="min-width: 50px;">작성자</label>
-                        <input th:value="${todayDiary.diaryWriter}" type="text" name="diaryWriter" class="form-control" readonly>
+                        <input type="text" name="diaryWriter" class="form-control" th:value="${todayDiary.diaryWriter}" readonly>
                     </div>
                     <div class="d-flex align-items-center gap-1 mb-3">
                         <label class="form-label fw-bold mb-0" style="min-width: 50px;">내용</label>
-                        <textarea th:text="${todayDiary.diaryContents}" name="diaryContents" class="form-control" readonly rows="2"></textarea>
+                        <textarea name="diaryContents" class="form-control" th:text="${todayDiary.diaryContents}" readonly rows="2"></textarea>
                     </div>
                     <div class="d-flex align-items-center gap-1 mb-3">
                         <label class="form-label fw-bold mb-0" style="min-width: 80px;">오늘의 감정</label>
-                        <input th:value="${todayDiary.moodToday}" type="text" name="moodToday" class="form-control" readonly>
+                        <input type="text" name="moodToday" class="form-control" th:value="${todayDiary.moodToday}" readonly>
                     </div>
                     <div class="d-flex align-items-center gap-1 mb-4">
                         <label for="createdAt" class="form-label fw-bold mb-0" style="min-width: 50px;">작성일</label>
-                        <input th:value="${todayDiary.createdAt}" type="text" id="createdAt" name="createdAt" class="form-control" readonly>
+                        <input type="text" id="createdAt" name="createdAt" class="form-control" th:value="${todayDiary.createdAt}" readonly>
                     </div>
                     <div class="d-flex justify-content-around">
-                        <button onclick="checkLogin('edit')" class="btn btn-lg btn-primary" type="submit">수정하기</button>
-                        <button onclick="checkLogin('list')" class="btn btn-lg btn-primary" type="submit">목록보기</button>
+                        <button id="modifyDiary" class="btn btn-primary" type="button">수정하기</button>
+                        <button id="listDiary" class="btn btn-primary" type="button">목록보기</button>
                     </div>
-                    <hr class="my-3">
-                    <small class="text-muted">로그인을 하면 한 줄 일기를 수정하고 관리할 수 있어요.</small>
                 </div>
             </div>
         </div>
     </div>
-    <script>
-        // 오늘의할일
-        document.addEventListener("DOMContentLoaded", function() {
-            const taskForm = document.getElementById("taskForm");
-            const taskInput = document.getElementById("taskInput");
-            const taskList = document.getElementById("taskList");
-            const deleteSelected = document.getElementById("deleteSelected");
 
-            taskForm.addEventListener("submit", function (event) {
-                event.preventDefault(); // 기본 제출 막기
-
-                const taskText = taskInput.value.trim(); // 공백 제거
-                if(taskText === "") return; // 빈칸입력 방지
-
-                const taskId = "task-" + Date.now; // 유니크한 id 생성
-
-                // 할일 항목 생성
-                const taskItem = document.createElement("div");
-                taskItem.classList.add("form-check", "mb-2");
-                taskItem.innerHTML = `
-                    <input class="form-check-input" type="checkbox" id="${taskId}">
-                    <label class="form-check-label" for="${taskId}">
-                        <span class="task-text">${taskText}</span>
-                    </label>
-                `;
-
-                taskList.appendChild(taskItem); // 목록에 추가
-                taskInput.value = ""; // 입력창 초기화
-            });
-
-            // 선택삭제 버튼 클릭 시 체크된 항목 제거
-            deleteSelected.addEventListener("click", function(event) {
-                event.preventDefault();
-                document.querySelectorAll("#taskList .form-check-input:checked").forEach((checkbox) => {
-                    checkbox.closest(".form-check").remove();
-                });
-            });
-        });
-
-    function checkLogin(action) {
-        // 로그인 여부 확인
-        const isLoggedIn = false; // 나중에 수정할것
-
-        if(!isLoggedIn) {
-            alert("로그인 후에 사용할 수 있습니다!");
-        } else {
-            // 로그인되어있다면 원하는 로직 수행
-            if(action === 'edit') {
-                // 수정하기 동작
-            } else if(action === 'list') {
-                // 목록보기 동작
-            }
-        }
-    }
-    </script>
+<script src="js/diary.js"></script>
 </main>
 </body>
 </html>

@@ -4,31 +4,32 @@
 
 <mapper namespace="Diary">
     <insert id="save" parameterType="diary">
-        insert into diary(diaryWriter, diaryContents, moodToday)
-        values(#{diaryWriter}, #{diaryContents}, #{moodToday})
+        insert into diary(diaryWriter, diaryContents, moodToday, memberId)
+        values(#{diaryWriter}, #{diaryContents}, #{moodToday}, #{memberId})
     </insert>
 
-    <select id="findAll" resultType="diary">
-        select id, diaryWriter, diaryContents, moodToday, date_format(createdAt, "%Y-%m-%d") as createdAt, diaryHits
-        from diary
-        order by id asc;
-    </select>
+<!--    <select id="findAll" resultType="diary">-->
+<!--        select id, diaryWriter, diaryContents, moodToday, date_format(createdAt, "%Y-%m-%d") as createdAt, diaryHits-->
+<!--        from diary-->
+<!--        order by id asc;-->
+<!--    </select>-->
 
-    <update id="updateHits" parameterType="Long">
-        update diary set diaryHits=diaryHits+1
-        where id=#{id}
-    </update>
-    <select id="findById" parameterType="Long" resultType="diary">
-        select id, diaryWriter, diaryContents, diaryHits, date_format(createdAt, "%Y-%m-%d %H:%i:%s") as createdAt
-        from diary
-        where id=#{id}
-    </select>
+<!--    <update id="updateHits" parameterType="Long">-->
+<!--        update diary set diaryHits=diaryHits+1-->
+<!--        where id=#{id}-->
+<!--    </update>-->
+<!--    <select id="findById" parameterType="Long" resultType="diary">-->
+<!--        select id, diaryWriter, diaryContents, diaryHits, date_format(createdAt, "%Y-%m-%d %H:%i:%s") as createdAt-->
+<!--        from diary-->
+<!--        where id=#{id}-->
+<!--    </select>-->
 
-    <select id="findTodayDiary" resultType="diary">
-        select id, diaryWriter, diaryContents, moodToday, date_format(createdAt, "%Y-%m-%d") as createdAt
+    <select id="findTodayDiary" parameterType="Long" resultType="diary">
+        select diaryId, diaryWriter, diaryContents, moodToday, date_format(createdAt, "%Y-%m-%d") as createdAt, memberId
         from diary
         where date(createdAt) = curdate()
-        order by id desc
-        limit 1;
+        and memberId = #{memberId}
+        order by diaryId desc
+        limit 1
     </select>
 </mapper>

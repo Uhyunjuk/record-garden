@@ -29,7 +29,7 @@ public class DiaryService {
         return diaryRepository.findById(id);
     }
 
-    public DiaryDTO findTodayDiary() {
-        return diaryRepository.findTodayDiary();
+    public DiaryDTO findTodayDiary(Long memberId) {
+        return diaryRepository.findTodayDiary(memberId);
     }
 }

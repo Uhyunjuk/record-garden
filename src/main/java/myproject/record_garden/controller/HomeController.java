@@ -1,8 +1,10 @@
 package myproject.record_garden.controller;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import myproject.record_garden.dto.DiaryDTO;
+import myproject.record_garden.dto.MemberDTO;
 import myproject.record_garden.service.DiaryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,29 +22,44 @@ public class HomeController {
     private final DiaryService diaryService;
 
     @GetMapping("/")
-    public String home() {
+    public String home(HttpSession session, Model model) {
+        MemberDTO loginUser = (MemberDTO) session.getAttribute("loginUser");
+
+        log.debug("세션에서 가져온 loginUser: {}", loginUser);
+        model.addAttribute("loginUser", loginUser);
+
+        // 로그인한 경우만 오늘의 일기 조회
+        if (loginUser != null) {
+            DiaryDTO todayDiary = diaryService.findTodayDiary(loginUser.getMemberId());
+            log.debug("오늘의 일기 조회: {}", todayDiary);
+            model.addAttribute("todayDiary", todayDiary);
+        }
+
         return "home";
     }
 
-    // 홈에서 한줄일기 작성 및 저장
-    @PostMapping("/diary/home-save")
-    public String saveFromHome(@ModelAttribute DiaryDTO diaryDTO,
-                               RedirectAttributes redirectAttributes) {
-        log.debug("선택한 감정: {}", diaryDTO.getMoodToday());
+    // 회원 한줄일기 작성
+    @PostMapping("/diary/write")
+    public String diaryWrite(@ModelAttribute DiaryDTO diaryDTO,
+                             HttpSession session,
+                             Model model) {
+        log.debug("[일기 작성 요청] diaryDTO (Before) : {}", diaryDTO);
+
+        // 세션에서 로그인한 회원정보 가져오기
+        MemberDTO loginUser = (MemberDTO) session.getAttribute("loginUser");
+        model.addAttribute("loginUser", loginUser);
+
+        // 일기 작성자의 닉네임을 세팅
+        diaryDTO.setDiaryWriter(loginUser.getMemberNickname());
+        diaryDTO.setMemberId(loginUser.getMemberId());
+
+        log.debug("[일기 작성 요청] diaryDTO (After) : {}", diaryDTO);
+
+        // 한줄일기 저장
         diaryService.save(diaryDTO);
 
-        // 저장한 오늘의 일기를 다시 가져오기
-        DiaryDTO todayDiary = diaryService.findTodayDiary();
-
-        // moodToday 값 이모지로 변환해서 저장
-        if (todayDiary != null) {
-            todayDiary.setMoodToday(converToEmoji(todayDiary.getMoodToday()));
-        }
-
-        // RedirectAttributes에 추가
-        redirectAttributes.addFlashAttribute("todayDiary", todayDiary);
-
-        return "redirect:/"; //  PRG패턴 적용(Post -> Redirect -> Get)
+        // 리다이렉트 새로고침 시 todayDiary가 갱신됨
+        return "redirect:/";
     }
 
     protected String converToEmoji(String mood) {
@@ -59,5 +76,4 @@ public class HomeController {
         // mood 값이 있으면 해당 이모지 반환, 없으면 물음표 반환
         return moodMap.getOrDefault(mood, "?");
     }
-
 }

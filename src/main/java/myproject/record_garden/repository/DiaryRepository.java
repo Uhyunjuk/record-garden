@@ -30,7 +30,7 @@ public class DiaryRepository {
         return sql.selectOne("Diary.findById", id);
     }
 
-    public DiaryDTO findTodayDiary() {
-        return sql.selectOne("Diary.findTodayDiary");
+    public DiaryDTO findTodayDiary(Long memberId) {
+        return sql.selectOne("Diary.findTodayDiary", memberId);
     }
 }
