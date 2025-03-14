@@ -17,8 +17,8 @@ public class DiaryService {
         diaryRepository.save(diaryDTO);
     }
 
-    public List<DiaryDTO> findAll() {
-        return diaryRepository.findAll();
+    public List<DiaryDTO> findAllByMemberId(Long memberId) {
+        return diaryRepository.findAllByMemberId(memberId);
     }
 
     public void updateHits(Long id) {

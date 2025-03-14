@@ -8,10 +8,10 @@ import myproject.record_garden.dto.MemberDTO;
 import myproject.record_garden.service.DiaryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -24,17 +24,20 @@ public class HomeController {
     @GetMapping("/")
     public String home(HttpSession session, Model model) {
         MemberDTO loginUser = (MemberDTO) session.getAttribute("loginUser");
-
-        log.debug("세션에서 가져온 loginUser: {}", loginUser);
         model.addAttribute("loginUser", loginUser);
 
         // 로그인한 경우만 오늘의 일기 조회
         if (loginUser != null) {
             DiaryDTO todayDiary = diaryService.findTodayDiary(loginUser.getMemberId());
-            log.debug("오늘의 일기 조회: {}", todayDiary);
+
+            // 오늘 작성한 일기가 있다면 이모지 변환 후 모델에 추가
+            if (todayDiary != null) {
+                todayDiary.setMoodToday(converToEmoji(todayDiary.getMoodToday()));
+                log.debug("오늘의 일기 조회: {}", todayDiary);
+            }
+
             model.addAttribute("todayDiary", todayDiary);
         }
-
         return "home";
     }
 
@@ -52,6 +55,9 @@ public class HomeController {
         // 일기 작성자의 닉네임을 세팅
         diaryDTO.setDiaryWriter(loginUser.getMemberNickname());
         diaryDTO.setMemberId(loginUser.getMemberId());
+
+        // 오늘의 기분을 이모지로 변환 후 저장
+        diaryDTO.setMoodToday(converToEmoji(diaryDTO.getMoodToday()));
 
         log.debug("[일기 작성 요청] diaryDTO (After) : {}", diaryDTO);
 

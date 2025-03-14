@@ -17,8 +17,8 @@ public class DiaryRepository {
         sql.insert("Diary.save", diaryDTO);
     }
 
-    public List<DiaryDTO> findAll() {
-        return sql.selectList("Diary.findAll");
+    public List<DiaryDTO> findAllByMemberId(Long memberId) {
+        return sql.selectList("Diary.findAllByMemberId", memberId);
     }
 
     // 조회수

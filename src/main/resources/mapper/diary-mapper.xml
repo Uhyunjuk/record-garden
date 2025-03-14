@@ -8,11 +8,11 @@
         values(#{diaryWriter}, #{diaryContents}, #{moodToday}, #{memberId})
     </insert>
 
-<!--    <select id="findAll" resultType="diary">-->
-<!--        select id, diaryWriter, diaryContents, moodToday, date_format(createdAt, "%Y-%m-%d") as createdAt, diaryHits-->
-<!--        from diary-->
-<!--        order by id asc;-->
-<!--    </select>-->
+    <select id="findAllByMemberId" parameterType="Long" resultType="diary">
+        select * from diary
+        where memberId = #{memberId}
+        order by createdAt desc;
+    </select>
 
 <!--    <update id="updateHits" parameterType="Long">-->
 <!--        update diary set diaryHits=diaryHits+1-->
